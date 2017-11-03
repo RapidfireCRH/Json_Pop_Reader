@@ -21,7 +21,7 @@ namespace pop_system
         static void Main(string[] args)
         {
             Json_reader j = new Json_reader();
-            Json_reader.pop_system_template[] systems = j.read(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"systems_populated.json"));
+            Json_reader.pop_system_template[] systems = j.read();
             while (true)
             {
                 int ptr = 0;

@@ -28,7 +28,7 @@ namespace pop_system
             public long last_scan_date;
             public bool done;
         }
-        public pop_system_template[] read(string file)
+        public pop_system_template[] read()
         {
             string[] file_contents = downloader();
             pop_system_template[] rtn = new pop_system_template[file_contents.Length];
