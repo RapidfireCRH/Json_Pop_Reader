@@ -39,7 +39,6 @@ namespace pop_system
                     }
                 }
                 systems[ptr].done = true;
-                File.AppendAllText(@"C:\Users\Rapid\Desktop\complete.txt", systems[ptr].id.ToString() + Environment.NewLine);
             }
         }
         static DateTime epochconvert(int epoch)
