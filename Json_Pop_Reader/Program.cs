@@ -65,7 +65,7 @@ namespace pop_system
                             if(!found)
                             {
                                 Console.WriteLine("");
-                                Console.WriteLine(search + " not found.");
+                                Console.WriteLine(search + " was not found.");
                                 Thread.Sleep(4000);
                             }
                             break;
@@ -83,7 +83,7 @@ namespace pop_system
                             Console.WriteLine();
                             for(int i = 1; i!= 21; i++)
                                 Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + epochconvert((int)systems[list[i].place].last_scan_date));
-                            Console.WriteLine("press enter to continue");
+                            Console.WriteLine("Press [Enter] to continue");
                             Console.Read();
                             break;
                     }
