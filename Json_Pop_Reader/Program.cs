@@ -38,18 +38,18 @@ namespace pop_system
                     k = Console.ReadLine();
                     if (k.Length == 0)
                         continue;
-                    switch (k[0])
+                    switch (k.ToLower()[0])
                     {
-                        case 'r':
+                        case 'r'://open ross page
                             System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
                             break;
-                        case 'e':
-                            System.Diagnostics.Process.Start("https://www.edsm.net/en/system/bodies/id/" + systems[ptr].edsm_id.ToString() + "/name");
+                        case 'e'://open EDSM page
+                            System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].edsm_id.ToString() + "/name");
                             break;
-                        case 'd':
+                        case 'd'://enter sector as done
                             systems[ptr].done = true;
                             break;
-                        case 's':
+                        case 'f'://find system
                             string search = k.Substring(2);
                             bool found = false;
                             for(int i = 0; i!=systems.Length;i++)
@@ -69,8 +69,7 @@ namespace pop_system
                                 Thread.Sleep(4000);
                             }
                             break;
-
-                        case 'c':
+                        case 'c'://find closest systems
                             List<distance_template> list = new List<distance_template>();
                             for (int scan = 0; scan != systems.Length; scan++)
                             {
@@ -85,6 +84,10 @@ namespace pop_system
                                 Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + epochconvert((int)systems[list[i].place].last_scan_date));
                             Console.WriteLine("Press [Enter] to continue");
                             Console.Read();
+                            break;
+                        case 'i'://import list of done systems
+                            break;
+                        case 'x'://export list of done systems
                             break;
                     }
                 }
