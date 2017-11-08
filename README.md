@@ -18,6 +18,28 @@ Commands are as follows:
   (i)mport - import done.txt to read in all done stars
 
   e(x)port - export done.txt file of all done sector id files
+  
+  (l)ist stations - Station list toggle. Stations follow the following format:
+          
+          DMFRAB 1/1/1970 | Station_name
+          
+          D | X - Docking permissions, x when unavailable
+
+          M - Market
+
+          F - Refuel
+
+          R - Repair
+
+          A - Rearm
+
+          B - Blackmarket
+
+          Date - Date from Marketupdate > outfittingupdate > shipyardupdate > last_update in that order
+
+          Name - Station name
+          
+          Each symbol is a - when not available and a ? when unknown.
 
 Feel free to raise a new issue for any features/ issues you might have.
 
