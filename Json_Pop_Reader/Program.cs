@@ -86,8 +86,27 @@ namespace pop_system
                             Console.Read();
                             break;
                         case 'i'://import list of done systems
+                            if(!File.Exists("done.txt"))
+                            {
+                                Console.WriteLine("");
+                                Console.WriteLine("Not able to find done.txt to import. Please make sure it is in the same directory as this program.");
+                                Thread.Sleep(6000);
+                                break;
+                            }
+                            string[] read = File.ReadAllLines("done.txt");
+                            foreach(string x in read)
+                                for (int i = 0; i != systems.Length; i++)
+                                    if (systems[i].id.ToString() == x)
+                                        systems[i].done = true;
                             break;
                         case 'x'://export list of done systems
+                            List<string> write = new List<string>();
+                            foreach(Json_reader.pop_system_template x in systems)
+                                if (x.done)
+                                    write.Add(x.id.ToString());
+                            if (File.Exists("done.txt"))
+                                File.Delete("done.txt");
+                            File.WriteAllLines("done.txt", write);
                             break;
                     }
                 }
