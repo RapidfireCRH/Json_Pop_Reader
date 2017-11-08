@@ -15,4 +15,8 @@ Commands are as follows:
 
 (c)losest - finds the 20 closest systems and displays their distance, and when they were last updated
 
+(i)mport - import done.txt to read in all done stars
+
+e(x)port - export done.txt file of all done sector id files
+
 Feel free to raise a new issue for any features/ issues you might have.
