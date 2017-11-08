@@ -56,6 +56,10 @@ namespace pop_system
         }
         public pop_system_template[] read()
         {
+            Console.WriteLine("***********************************************************");
+            Console.WriteLine("                    Loading... Please Wait");
+            Console.WriteLine("***********************************************************");
+            Console.WriteLine("Step 1 of 2: Loading Sectors");
             string[] file_contents = downloader("https://eddb.io/archive/v5/systems_populated.json");
             pop_system_template[] rtn = new pop_system_template[file_contents.Length];
             int spot = 0;
@@ -110,6 +114,7 @@ namespace pop_system
                 rtn[spot].stations = new List<station_template>();
                 rtn[spot++].last_scan_date = stuff.updated_at;
             }
+            Console.WriteLine("Step 2 of 2: Loading Stations");
             file_contents = downloader("https://eddb.io/archive/v5/stations.json");
             foreach(string x in file_contents)
             {
@@ -148,11 +153,13 @@ namespace pop_system
                 st.market_update = stuff.market_updated_at;
                 st.settlement_size = stuff.settlement_size_id;
                 st.settlement_security = stuff.settlement_security_id;
+                st.body_id = stuff.body_id;
                 int system_id = stuff.system_id;
                 for (int i = 0; i != rtn.Length; i++)
                     if (rtn[i].id == system_id)
                         rtn[i].stations.Add(st);
             }
+            Console.Clear();
             return rtn;
         }
         public string[] downloader(string addr)

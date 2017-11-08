@@ -32,9 +32,12 @@ namespace pop_system
                 while (!systems[ptr].done)
                 {
                     Console.Clear();
-                    Console.WriteLine("Entry" + ptr + ": ID - " + systems[ptr].id + " System Name: " + systems[ptr].name);
-                    Console.WriteLine("Last entry: " + epochconvert((int)systems[ptr].last_scan_date));
-                    Console.WriteLine("Pop: " + (systems[ptr].population == -1 ? "Unknown" : systems[ptr].population.ToString()) + " | System Gov: " + (Json_reader.government_name)systems[ptr].government_type + " | Security: " + (Json_reader.security)systems[ptr].security_id);
+                    Console.WriteLine("Entry" + ptr + " | ID - " + systems[ptr].id + " | Last Update: " + epochconvert((int)systems[ptr].last_scan_date));
+                    Console.WriteLine("System Name: " + systems[ptr].name);
+                    Console.WriteLine("Pop: " + (systems[ptr].population == -1 ? "Unknown" : systems[ptr].population.ToString()));
+                    Console.WriteLine("System Gov: " + (Json_reader.government_name)systems[ptr].government_type);
+                    Console.WriteLine("Security: " + (Json_reader.security)systems[ptr].security_id);
+                    Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
                     k = Console.ReadLine();
                     if (k.Length == 0)
                         continue;
@@ -52,7 +55,7 @@ namespace pop_system
                         case 'f'://find system
                             string search = k.Substring(2);
                             bool found = false;
-                            for(int i = 0; i!=systems.Length;i++)
+                            for (int i = 0; i != systems.Length; i++)
                             {
                                 if (systems[i].name.ToLower() == search.ToLower())
                                 {
@@ -62,7 +65,7 @@ namespace pop_system
                                     break;
                                 }
                             }
-                            if(!found)
+                            if (!found)
                             {
                                 Console.WriteLine("");
                                 Console.WriteLine(search + " was not found.");
@@ -80,13 +83,13 @@ namespace pop_system
                             }
                             list.Sort();
                             Console.WriteLine();
-                            for(int i = 1; i!= 21; i++)
+                            for (int i = 1; i != 21; i++)
                                 Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + epochconvert((int)systems[list[i].place].last_scan_date));
                             Console.WriteLine("Press [Enter] to continue");
                             Console.Read();
                             break;
                         case 'i'://import list of done systems
-                            if(!File.Exists("done.txt"))
+                            if (!File.Exists("done.txt"))
                             {
                                 Console.WriteLine("");
                                 Console.WriteLine("Not able to find done.txt to import. Please make sure it is in the same directory as this program.");
@@ -94,23 +97,24 @@ namespace pop_system
                                 break;
                             }
                             string[] read = File.ReadAllLines("done.txt");
-                            foreach(string x in read)
+                            foreach (string x in read)
                                 for (int i = 0; i != systems.Length; i++)
                                     if (systems[i].id.ToString() == x)
                                         systems[i].done = true;
                             break;
                         case 'x'://export list of done systems
                             List<string> write = new List<string>();
-                            foreach(Json_reader.pop_system_template x in systems)
+                            foreach (Json_reader.pop_system_template x in systems)
                                 if (x.done)
                                     write.Add(x.id.ToString());
                             if (File.Exists("done.txt"))
                                 File.Delete("done.txt");
                             File.WriteAllLines("done.txt", write);
                             break;
+
                     }
                 }
-                
+
             }
         }
         static DateTime epochconvert(int epoch)
@@ -118,5 +122,4 @@ namespace pop_system
             return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(epoch);
         }
     }
-
 }
