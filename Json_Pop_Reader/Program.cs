@@ -22,6 +22,7 @@ namespace pop_system
         {
             Json_reader j = new Json_reader();
             Json_reader.pop_system_template[] systems = j.read();
+            bool list_stations = false;
             while (true)
             {
                 int ptr = 0;
@@ -38,6 +39,9 @@ namespace pop_system
                     Console.WriteLine("System Gov: " + (Json_reader.government_name)systems[ptr].government_type);
                     Console.WriteLine("Security: " + (Json_reader.security)systems[ptr].security_id);
                     Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
+                    if (list_stations)
+                        foreach (Json_reader.station_template x in systems[ptr].stations)
+                            Console.WriteLine(station_writeline(x));
                     k = Console.ReadLine();
                     if (k.Length == 0)
                         continue;
@@ -111,7 +115,9 @@ namespace pop_system
                                 File.Delete("done.txt");
                             File.WriteAllLines("done.txt", write);
                             break;
-
+                        case 'l':
+                            list_stations = !list_stations;
+                            break;
                     }
                 }
 
@@ -120,6 +126,19 @@ namespace pop_system
         static DateTime epochconvert(int epoch)
         {
             return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(epoch);
+        }
+        static string station_writeline(Json_reader.station_template station)
+        {
+            String ret = "";
+            ret += station.docking.HasValue ? ((bool)station.docking ? "D" : "X") : "?";
+            ret += station.market.HasValue ? ((bool)station.market ? "M" : "-") : "?";
+            ret += station.refuel.HasValue ? ((bool)station.refuel ? "F" : "-") : "?";
+            ret += station.repair.HasValue ? ((bool)station.repair ? "R" : "-") : "?";
+            ret += station.rearm.HasValue ? ((bool)station.rearm ? "A" : "-") : "?";
+            ret += station.blackmarket.HasValue ? ((bool)station.blackmarket ? "B" : "-") : "?";
+            ret += " " + (station.last_update.HasValue ? epochconvert((int)station.last_update).ToShortDateString() : "Unknown Date");
+            ret += " | " + station.name + " ";
+            return ret;
         }
     }
 }
