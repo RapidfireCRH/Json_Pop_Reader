@@ -136,8 +136,12 @@ namespace pop_system
             ret += station.repair.HasValue ? ((bool)station.repair ? "R" : "-") : "?";
             ret += station.rearm.HasValue ? ((bool)station.rearm ? "A" : "-") : "?";
             ret += station.blackmarket.HasValue ? ((bool)station.blackmarket ? "B" : "-") : "?";
-            ret += " " + (station.last_update.HasValue ? epochconvert((int)station.last_update).ToShortDateString() : "Unknown Date");
-            ret += " | " + station.name + " ";
+            ret += " " + 
+                (station.market_update.HasValue ? epochconvert((int)station.market_update).ToShortDateString() : 
+                (station.outfitting_update.HasValue ? epochconvert((int)station.outfitting_update).ToShortDateString() : 
+                (station.shipyard_update.HasValue ? epochconvert((int)station.shipyard_update).ToShortDateString() : 
+                (station.last_update.HasValue ? epochconvert((int)station.last_update).ToShortDateString() : "Unknown Date"))));
+            ret += " | " + station.name;
             return ret;
         }
     }
