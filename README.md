@@ -23,7 +23,7 @@ Commands are as follows:
           
           DMFRAB 1/1/1970 | Station_name
           
-          D | X - Docking permissions
+          D | X - Docking permissions, x when unavailable
 
           M - Market
 
@@ -38,6 +38,8 @@ Commands are as follows:
           Date - Date from Marketupdate > outfittingupdate > shipyardupdate > last_update in that order
 
           Name - Station name
+          
+          Each symbol is a - when not available and a ? when unknown.
 
 Feel free to raise a new issue for any features/ issues you might have.
 
