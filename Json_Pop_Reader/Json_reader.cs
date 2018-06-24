@@ -12,8 +12,8 @@ namespace pop_system
     class Json_reader
     {
         public enum government_name { Patronage = 144, Democracy = 96, Dictatorship = 112, Cooperative = 80, Corporate = 64, Feudal = 128, Confederacy = 48, Communism = 32, Anarchy = 16, Theocracy = 160, Prison_Colony = 150, unknown = -1 }
-        public enum security { unknown = -1, none = 0, low = 16, medium = 32, high = 48 }
-        public enum pad_size { unknown = -1, none = 0, Medium = 1, Large = 2}
+        public enum security { Unknown = -1, None = 0, Low = 16, Medium = 32, High = 48 }
+        public enum pad_size { Unknown = -1, None = 0, Medium = 1, Large = 2}
         public enum station_type { unknown = -1, Civilian_Outpost = 1, Commercial_Outpost = 2, Coriolis_Starport = 3, Industrial_Outpost = 4, Military_Outpost = 5, Mining_Outpost = 6, Ocellus_Starport = 7, Orbis_Starport = 8, Scientific_Outpost = 9, Unknown_Outpost = 11, Unknown_Starport = 12, Planetary_Outpost = 13, Planetary_Port = 14, Unknown_Planetary = 15, Planetary_Settlement = 16, Planetary_Engineer_Base = 17, Megaship = 19, Asteroid_Base = 20 }
 
         public struct station_template
@@ -54,6 +54,8 @@ namespace pop_system
             public long last_scan_date;
             public bool done;
             public List<station_template> stations;
+            public int edsm_body_count;
+            public int eddb_body_count;
         }
         public pop_system_template[] read()
         {
@@ -101,6 +103,8 @@ namespace pop_system
                         rtn[spot].primary_economy_id = stuff.primary_economy_id;
                     else
                         rtn[spot].primary_economy_id = -1;
+                    rtn[spot].edsm_body_count = -1;
+                    rtn[spot].eddb_body_count = -1;
                     rtn[spot].stations = new List<station_template>();
                     rtn[spot++].last_scan_date = stuff.updated_at;
                 }
@@ -176,10 +180,26 @@ namespace pop_system
                 temp = client.DownloadString(addr);
             temp = temp.Substring(1, temp.Length - 2);
             temp = temp.Replace("},{\"id\"", "}" + Environment.NewLine + "{\"id\"");
-            File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"temp.json"), temp);
+            File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"), temp);
             string[] ret = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
             File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
             return ret;
+        }
+        public int edsmdownloader(string name)
+        {
+            try
+            {
+                string temp = "";
+                using (WebClient client = new WebClient())
+                    temp = client.DownloadString("https://www.edsm.net/api-system-v1/bodies?systemName="+name);
+                dynamic stuff = JObject.Parse(temp);
+                return stuff.bodies.Count;
+            }
+            catch
+            {
+
+            }
+            return -1;
         }
         private void errorlog(string message)
         {

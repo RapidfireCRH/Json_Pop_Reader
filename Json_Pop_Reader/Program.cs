@@ -40,6 +40,7 @@ namespace pop_system
                     if (systems[ptr].last_scan_date > systems[scan].last_scan_date && systems[scan].done != true)
                         ptr = scan;
                 string k = "";
+                systems[ptr].edsm_body_count = j.edsmdownloader(systems[ptr].name);
                 while (!systems[ptr].done)
                 {
                     Console.Clear();
@@ -48,10 +49,13 @@ namespace pop_system
                     Console.WriteLine("Pop: " + (systems[ptr].population == -1 ? "Unknown" : systems[ptr].population.ToString()));
                     Console.WriteLine("System Gov: " + (Json_reader.government_name)systems[ptr].government_type);
                     Console.WriteLine("Security: " + (Json_reader.security)systems[ptr].security_id);
+                    Console.WriteLine("Number of Bodies:");
+                    Console.WriteLine("  EDSM: " + (systems[ptr].edsm_body_count == -1 ? "Unknown" : systems[ptr].edsm_body_count.ToString()));
+                    Console.WriteLine("  EDDB: " + (systems[ptr].eddb_body_count == -1 ? "Unknown" : systems[ptr].eddb_body_count.ToString()));
                     Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
                     if (list_stations)
                         foreach (Json_reader.station_template x in systems[ptr].stations)
-                            Console.WriteLine(station_writeline(x));
+                            Console.WriteLine("  " + station_writeline(x));
                     Console.WriteLine();
                     Console.Write("Enter Command (h for help):");
                     k = Console.ReadLine();
@@ -136,6 +140,9 @@ namespace pop_system
                         case 'l'://toggle listing of stations
                             list_stations = !list_stations;
                             break;
+                        case 'b':
+                            systems[ptr].edsm_body_count = j.edsmdownloader(systems[ptr].name);
+                            break;
                         case 'h'://Help dialog
                             Console.Clear();
                             Console.WriteLine("List of commands:");
@@ -147,6 +154,7 @@ namespace pop_system
                             Console.WriteLine("  i - Import done.txt list of names");
                             Console.WriteLine("  x - Export done.txt with list of done names");
                             Console.WriteLine("  l - Toggle list of stations (Key below)");
+                            Console.WriteLine("  b - Reload body count");
                             Console.WriteLine("  h - Show this help menu");
                             Console.WriteLine();
                             Console.WriteLine("Station Key:");
