@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Newtonsoft.Json.Linq;
 
 namespace pop_system
@@ -60,109 +61,115 @@ namespace pop_system
             Console.WriteLine("                    Loading... Please Wait");
             Console.WriteLine("***********************************************************");
             Console.WriteLine("Step 1 of 2: Loading Sectors");
-            string[] file_contents = downloader("https://eddb.io/archive/v5/systems_populated.json");
-            pop_system_template[] rtn = new pop_system_template[file_contents.Length];
-            int spot = 0;
-            foreach (string x in file_contents)
+            pop_system_template[] rtn = new pop_system_template[0];
+            try
             {
-                dynamic stuff = JObject.Parse(x);
-                rtn[spot].id = stuff.id;
-                switch(rtn[spot].id)
+                string[] file_contents = eddbdownloader("https://eddb.io/archive/v5/systems_populated.json");
+                rtn = new pop_system_template[file_contents.Length];
+                int spot = 0;
+                foreach (string x in file_contents)
                 {
-                    case 7154923:
-                        rtn[spot].edsm_id = 4671;
-                        break;
-                    case 8355343:
-                        rtn[spot].edsm_id = 3852646;
-                        break;
-                    case 8716382:
-                        rtn[spot].edsm_id = 4974219;
-                        break;
-                    default:
-                        rtn[spot].edsm_id = stuff.edsm_id;
-                        break;
+                    dynamic stuff = JObject.Parse(x);
+                    rtn[spot].id = stuff.id;
+                    rtn[spot].edsm_id = stuff.edsm_id;
+                    rtn[spot].name = stuff.name;
+                    rtn[spot].coordinates = new float[3];
+                    rtn[spot].coordinates[0] = stuff.x;
+                    rtn[spot].coordinates[1] = stuff.y;
+                    rtn[spot].coordinates[2] = stuff.z;
+                    if (stuff.population != null)
+                        rtn[spot].population = stuff.population;
+                    else
+                        rtn[spot].population = -1;
+                    if (stuff.government_id != null)
+                        rtn[spot].government_type = stuff.government_id;
+                    else
+                        rtn[spot].government_type = -1;
+                    if (stuff.allegiance_id != null)
+                        rtn[spot].allegiance_id = stuff.allegiance_id;
+                    else
+                        rtn[spot].allegiance_id = -1;
+                    if (stuff.state_id != null)
+                        rtn[spot].state_id = stuff.state_id;
+                    else
+                        rtn[spot].state_id = -1;
+                    if (stuff.security_id != null)
+                        rtn[spot].security_id = stuff.security_id;
+                    else
+                        rtn[spot].security_id = -1;
+                    if (stuff.primary_economy_id != null)
+                        rtn[spot].primary_economy_id = stuff.primary_economy_id;
+                    else
+                        rtn[spot].primary_economy_id = -1;
+                    rtn[spot].stations = new List<station_template>();
+                    rtn[spot++].last_scan_date = stuff.updated_at;
                 }
-                rtn[spot].name = stuff.name;
-                rtn[spot].coordinates = new float[3];
-                rtn[spot].coordinates[0] = stuff.x;
-                rtn[spot].coordinates[1] = stuff.y;
-                rtn[spot].coordinates[2] = stuff.z;
-                if (stuff.population != null)
-                    rtn[spot].population = stuff.population;
-                else
-                    rtn[spot].population = -1;
-                if (stuff.government_id != null)
-                    rtn[spot].government_type = stuff.government_id;
-                else
-                    rtn[spot].government_type = -1;
-                if (stuff.allegiance_id != null)
-                    rtn[spot].allegiance_id = stuff.allegiance_id;
-                else
-                    rtn[spot].allegiance_id = -1;
-                if (stuff.state_id != null)
-                    rtn[spot].state_id = stuff.state_id;
-                else
-                    rtn[spot].state_id = -1;
-                if (stuff.security_id != null)
-                    rtn[spot].security_id = stuff.security_id;
-                else
-                    rtn[spot].security_id = -1;
-                if (stuff.primary_economy_id != null)
-                    rtn[spot].primary_economy_id = stuff.primary_economy_id;
-                else
-                    rtn[spot].primary_economy_id = -1;
-                rtn[spot].stations = new List<station_template>();
-                rtn[spot++].last_scan_date = stuff.updated_at;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Fatal Error Downloading Systems: " + e.Message + Environment.NewLine + e.StackTrace);
+                errorlog("Fatal Error Downloading Systems: " + e.Message + Environment.NewLine + e.StackTrace);
+                Thread.Sleep(2000);
+                return new pop_system_template[0];
             }
             Console.WriteLine("Step 2 of 2: Loading Stations");
-            file_contents = downloader("https://eddb.io/archive/v5/stations.json");
-            foreach(string x in file_contents)
+            try
             {
-                dynamic stuff = JObject.Parse(x);
-                station_template st = new station_template();
-                st.id = stuff.id;
-                st.name = stuff.name;
-                st.last_update = stuff.updated_at;
-                switch(stuff.max_landing_pad_size)
+                string[] file_contents = eddbdownloader("https://eddb.io/archive/v5/stations.json");
+                foreach (string x in file_contents)
                 {
-                    case "L":
-                        st.pad_size = 2;
-                        break;
-                    case "M":
-                        st.pad_size = 1;
-                        break;
-                    case "None":
-                        st.pad_size = 0;
-                        break;
-                    default:
-                        st.pad_size = -1;
-                        break;
+                    dynamic stuff = JObject.Parse(x);
+                    station_template st = new station_template();
+                    st.id = stuff.id;
+                    st.name = stuff.name;
+                    st.last_update = stuff.updated_at;
+                    switch (stuff.max_landing_pad_size)
+                    {
+                        case "L":
+                            st.pad_size = 2;
+                            break;
+                        case "M":
+                            st.pad_size = 1;
+                            break;
+                        case "None":
+                            st.pad_size = 0;
+                            break;
+                        default:
+                            st.pad_size = -1;
+                            break;
+                    }
+                    st.type_id = stuff.type_id;
+                    st.blackmarket = stuff.has_blackmarket;
+                    st.market = stuff.has_market;
+                    st.refuel = stuff.has_refuel;
+                    st.repair = stuff.has_repair;
+                    st.rearm = stuff.has_rearm;
+                    st.outfitting = stuff.has_outfitting;
+                    st.shipyard = stuff.has_shipyard;
+                    st.docking = stuff.has_docking;
+                    st.commodities = stuff.has_commodities;
+                    st.shipyard_update = stuff.shipyard_updated_at;
+                    st.outfitting_update = stuff.outfitting_updated_at;
+                    st.market_update = stuff.market_updated_at;
+                    st.settlement_size = stuff.settlement_size_id;
+                    st.settlement_security = stuff.settlement_security_id;
+                    st.body_id = stuff.body_id;
+                    int system_id = stuff.system_id;
+                    for (int i = 0; i != rtn.Length; i++)
+                        if (rtn[i].id == system_id)
+                            rtn[i].stations.Add(st);
                 }
-                st.type_id = stuff.type_id;
-                st.blackmarket = stuff.has_blackmarket;
-                st.market = stuff.has_market;
-                st.refuel = stuff.has_refuel;
-                st.repair = stuff.has_repair;
-                st.rearm = stuff.has_rearm;
-                st.outfitting = stuff.has_outfitting;
-                st.shipyard = stuff.has_shipyard;
-                st.docking = stuff.has_docking;
-                st.commodities = stuff.has_commodities;
-                st.shipyard_update = stuff.shipyard_updated_at;
-                st.outfitting_update = stuff.outfitting_updated_at;
-                st.market_update = stuff.market_updated_at;
-                st.settlement_size = stuff.settlement_size_id;
-                st.settlement_security = stuff.settlement_security_id;
-                st.body_id = stuff.body_id;
-                int system_id = stuff.system_id;
-                for (int i = 0; i != rtn.Length; i++)
-                    if (rtn[i].id == system_id)
-                        rtn[i].stations.Add(st);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error downloading stations. Station listing may be incomplete. Error: " + e.Message + Environment.NewLine + e.StackTrace);
+                errorlog("Error downloading stations. Station listing may be incomplete. Error: " + e.Message + Environment.NewLine + e.StackTrace);
+                Thread.Sleep(2000);
             }
             Console.Clear();
             return rtn;
         }
-        public string[] downloader(string addr)
+        public string[] eddbdownloader(string addr)
         {
             string temp = "";
             using (WebClient client = new WebClient())
@@ -173,6 +180,11 @@ namespace pop_system
             string[] ret = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
             File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
             return ret;
+        }
+        private void errorlog(string message)
+        {
+            try { File.WriteAllText("errorlog.log", message); }
+            catch { Console.WriteLine("Cannot write error log."); }
         }
     }
 }

@@ -22,6 +22,8 @@ namespace pop_system
         {
             Json_reader j = new Json_reader();
             Json_reader.pop_system_template[] systems = j.read();
+            if (systems.Length == 0)//error catching on json load.
+                return;
             bool list_stations = false;
             while (true)
             {
@@ -42,6 +44,8 @@ namespace pop_system
                     if (list_stations)
                         foreach (Json_reader.station_template x in systems[ptr].stations)
                             Console.WriteLine(station_writeline(x));
+                    Console.WriteLine();
+                    Console.Write("Enter Command (h for help):");
                     k = Console.ReadLine();
                     if (k.Length == 0)
                         continue;
@@ -89,7 +93,7 @@ namespace pop_system
                             Console.WriteLine();
                             for (int i = 1; i != 21; i++)
                                 Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + epochconvert((int)systems[list[i].place].last_scan_date));
-                            Console.WriteLine("Press [Enter] to continue");
+                            Console.WriteLine("Press a key to continue");
                             Console.Read();
                             break;
                         case 'i'://import list of done systems
@@ -105,6 +109,9 @@ namespace pop_system
                                 for (int i = 0; i != systems.Length; i++)
                                     if (systems[i].id.ToString() == x)
                                         systems[i].done = true;
+                            Console.WriteLine();
+                            Console.WriteLine("Load completed.");
+                            Thread.Sleep(4000);
                             break;
                         case 'x'://export list of done systems
                             List<string> write = new List<string>();
@@ -114,9 +121,42 @@ namespace pop_system
                             if (File.Exists("done.txt"))
                                 File.Delete("done.txt");
                             File.WriteAllLines("done.txt", write);
+                            Console.WriteLine();
+                            Console.WriteLine("Save completed.");
+                            Thread.Sleep(4000);
                             break;
-                        case 'l':
+                        case 'l'://toggle listing of stations
                             list_stations = !list_stations;
+                            break;
+                        case 'h'://Help dialog
+                            Console.Clear();
+                            Console.WriteLine("List of commands:");
+                            Console.WriteLine("  r - Opens ROSS page for currently selected star");
+                            Console.WriteLine("  e - Opens EDSM page for currently selected star");
+                            Console.WriteLine("  d - Marks star as done (automatically finds next oldest star)");
+                            Console.WriteLine("  f (star name) - Finds the named star");
+                            Console.WriteLine("  c - Find the closest 20 systems ");
+                            Console.WriteLine("  i - Import done.txt list of names");
+                            Console.WriteLine("  x - Export done.txt with list of done names");
+                            Console.WriteLine("  l - Toggle list of stations (Key below)");
+                            Console.WriteLine("  h - Show this help menu");
+                            Console.WriteLine();
+                            Console.WriteLine("Station Key:");
+                            Console.WriteLine("  ? means unknown on EDDB/ROSS.");
+                            Console.WriteLine("  D - Docking allowed; X - Docking not allowed");
+                            Console.WriteLine("  M - Has Market");
+                            Console.WriteLine("  F - Has Refuel");
+                            Console.WriteLine("  R - Has Repair");
+                            Console.WriteLine("  A - Has Rearm");
+                            Console.WriteLine("  B - Has Blackmarket");
+                            Console.WriteLine();
+                            Console.Write("Press any key to continue.");
+                            Console.ReadKey();
+                            break;
+                        default:
+                            Console.WriteLine("");
+                            Console.WriteLine("Bad Command :" + k[0]);
+                            Thread.Sleep(2000);
                             break;
                     }
                 }
