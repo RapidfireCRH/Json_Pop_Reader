@@ -19,6 +19,8 @@ Commands are as follows:
 
   e(x)port - export done.txt file of all done sector id files
   
+  (h)elp - shows help dialog (showing this information)
+  
   (l)ist stations - Station list toggle. Stations follow the following format:
           
           DMFRAB 1/1/1970 | Station_name
