@@ -18,6 +18,14 @@ namespace pop_system
                 return this.distance.CompareTo(other.distance);
             }
         }
+        /// <summary>
+        /// Find old systems and displays known data
+        /// </summary>
+        /// v1.03 - help added, catching of errors
+        /// v1.02 - Export, import and station support added
+        /// v1.01 - closest and find commands added
+        /// v1.0 - initial release
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             Json_reader j = new Json_reader();
