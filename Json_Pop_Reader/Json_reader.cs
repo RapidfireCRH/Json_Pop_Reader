@@ -193,11 +193,12 @@ namespace pop_system
                 using (WebClient client = new WebClient())
                     temp = client.DownloadString("https://www.edsm.net/api-system-v1/bodies?systemName="+name);
                 dynamic stuff = JObject.Parse(temp);
-                return stuff.bodies.Count;
+                if (stuff.bodies.Count > 0)
+                    return stuff.bodies.Count;
             }
-            catch
+            catch(Exception e)
             {
-
+                errorlog("Unable to get body count from EDSM. " + e.Message + Environment.NewLine + e.StackTrace);
             }
             return -1;
         }
