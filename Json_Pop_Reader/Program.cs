@@ -105,8 +105,8 @@ namespace pop_system
                             Console.WriteLine();
                             for (int i = 1; i != 21; i++)
                                 Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + epochconvert((int)systems[list[i].place].last_scan_date));
-                            Console.WriteLine("Press a key to continue");
-                            Console.Read();
+                            Console.WriteLine("Press any key to continue");
+                            Console.ReadKey();
                             break;
                         case 'i'://import list of done systems
                             if (!File.Exists("done.txt"))

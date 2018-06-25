@@ -160,8 +160,13 @@ namespace pop_system
                     st.body_id = stuff.body_id;
                     int system_id = stuff.system_id;
                     for (int i = 0; i != rtn.Length; i++)
+                    {
                         if (rtn[i].id == system_id)
+                        {
                             rtn[i].stations.Add(st);
+                            break;
+                        }
+                    }
                 }
             }
             catch (Exception e)
