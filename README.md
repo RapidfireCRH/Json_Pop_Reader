@@ -19,6 +19,8 @@ Commands are as follows:
 
   e(x)port - export done.txt file of all done sector id files
   
+  (b)odies - reload body count. Be careful with this command, as you may reach your api rate limit with EDSM.
+  
   (h)elp - shows help dialog (showing this information)
   
   (l)ist stations - Station list toggle. Stations follow the following format:
