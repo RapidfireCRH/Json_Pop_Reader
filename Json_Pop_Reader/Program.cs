@@ -9,6 +9,9 @@ namespace pop_system
 {
     class Program
     {
+        /// <summary>
+        /// Distance defination for closest query
+        /// </summary>
         struct distance_template : IComparable<distance_template>
         {
             public int place;
