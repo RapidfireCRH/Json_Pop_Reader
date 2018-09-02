@@ -70,7 +70,7 @@ namespace pop_system
             pop_system_template[] rtn = new pop_system_template[0];
             try
             {
-                string[] file_contents = eddbdownloader("https://eddb.io/archive/v5/systems_populated.json");
+                string[] file_contents = downloader("https://eddb.io/archive/v5/systems_populated.json");
                 rtn = new pop_system_template[file_contents.Length];
                 int spot = 0;
                 foreach (string x in file_contents)
@@ -123,7 +123,7 @@ namespace pop_system
             Console.WriteLine("Step 2 of 2: Loading Stations");
             try
             {
-                string[] file_contents = eddbdownloader("https://eddb.io/archive/v5/stations.json");
+                string[] file_contents = downloader("https://eddb.io/archive/v5/stations.json");
                 foreach (string x in file_contents)
                 {
                     dynamic stuff = JObject.Parse(x);
@@ -183,11 +183,11 @@ namespace pop_system
             return rtn;
         }
         /// <summary>
-        /// Downloader template for EDDB
-        /// </summary>
-        /// <param name="addr">Address to download</param>
-        /// <returns>parced string array, one line per item.</returns>
-        public string[] eddbdownloader(string addr)
+                               /// Downloader template for EDDB / EDSM
+                               /// </summary>
+                               /// <param name="addr">Address to download</param>
+                               /// <returns>parced string array, one line per item.</returns>
+        public string[] downloader(string addr)
         {
             string temp = "";
             using (WebClient client = new WebClient())
