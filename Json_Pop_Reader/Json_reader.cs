@@ -70,11 +70,13 @@ namespace pop_system
             pop_system_template[] rtn = new pop_system_template[0];
             try
             {
-                string[] file_contents = eddbdownloader("https://eddb.io/archive/v5/systems_populated.json");
+                string[] file_contents = downloader("https://www.edsm.net/dump/systemsPopulated.json");
                 rtn = new pop_system_template[file_contents.Length];
                 int spot = 0;
                 foreach (string x in file_contents)
                 {
+                    if (x == "")
+                        continue;
                     dynamic stuff = JObject.Parse(x);
                     rtn[spot].id = stuff.id;
                     rtn[spot].edsm_id = stuff.edsm_id;
@@ -123,7 +125,7 @@ namespace pop_system
             Console.WriteLine("Step 2 of 2: Loading Stations");
             try
             {
-                string[] file_contents = eddbdownloader("https://eddb.io/archive/v5/stations.json");
+                string[] file_contents = downloader("https://www.edsm.net/dump/stations.json");
                 foreach (string x in file_contents)
                 {
                     dynamic stuff = JObject.Parse(x);
@@ -183,17 +185,21 @@ namespace pop_system
             return rtn;
         }
         /// <summary>
-        /// Downloader template for EDDB
-        /// </summary>
-        /// <param name="addr">Address to download</param>
-        /// <returns>parced string array, one line per item.</returns>
-        public string[] eddbdownloader(string addr)
+                               /// Downloader template for EDDB / EDSM
+                               /// </summary>
+                               /// <param name="addr">Address to download</param>
+                               /// <returns>parced string array, one line per item.</returns>
+        public string[] downloader(string addr)
         {
             string temp = "";
             using (WebClient client = new WebClient())
                 temp = client.DownloadString(addr);
             temp = temp.Substring(1, temp.Length - 2);//Remove [ and ]
             temp = temp.Replace("},{\"id\"", "}" + Environment.NewLine + "{\"id\"");//move each entry into a new line
+            //edsm fixes
+            temp = temp.Replace("}," + Environment.NewLine + "    {\"id\"", "}" + Environment.NewLine + "{\"id\"");
+            if (temp.Substring(0, 5) == (Environment.NewLine + "    "))
+                temp = temp.Substring(5, temp.Length - 5);
 
             //Write text to read (faster then going line per line)
             File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"), temp);
