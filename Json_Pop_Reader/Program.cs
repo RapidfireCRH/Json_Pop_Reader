@@ -33,11 +33,11 @@ namespace pop_system
                 while (!systems[ptr].done)
                 {
                     Console.Clear();
-                    Console.WriteLine("Entry" + ptr + " | ID - " + systems[ptr].id + " | Last Update: " + epochconvert((int)systems[ptr].last_scan_date));
+                    Console.WriteLine("Entry" + ptr + " | ID - " + systems[ptr].id + " | Last Update: " + systems[ptr].last_scan_date.ToShortDateString() + " " + systems[ptr].last_scan_date.ToLongTimeString());
                     Console.WriteLine("System Name: " + systems[ptr].name);
                     Console.WriteLine("Pop: " + (systems[ptr].population == -1 ? "Unknown" : systems[ptr].population.ToString()));
-                    Console.WriteLine("System Gov: " + (Json_reader.government_name)systems[ptr].government_type);
-                    Console.WriteLine("Security: " + (Json_reader.security)systems[ptr].security_id);
+                    Console.WriteLine("System Gov: " + (Json_reader.government_type)systems[ptr].government);
+                    Console.WriteLine("Security: " + (Json_reader.security_type)systems[ptr].security);
                     Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
                     if (list_stations)
                         foreach (Json_reader.station_template x in systems[ptr].stations)
@@ -51,7 +51,7 @@ namespace pop_system
                             System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
                             break;
                         case 'e'://open EDSM page
-                            System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].edsm_id.ToString() + "/name");
+                            //System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].edsm_id.ToString() + "/name");
                             break;
                         case 'd'://enter sector as done
                             systems[ptr].done = true;
@@ -82,13 +82,13 @@ namespace pop_system
                             {
                                 distance_template next = new distance_template();
                                 next.place = scan;
-                                next.distance = (float)Math.Sqrt(Math.Pow(systems[scan].coordinates[0] - systems[ptr].coordinates[0], 2) + Math.Pow(systems[scan].coordinates[1] - systems[ptr].coordinates[1], 2) + Math.Pow(systems[scan].coordinates[2] - systems[ptr].coordinates[2], 2));
+                                next.distance = (float)Math.Sqrt(Math.Pow(systems[scan].coord.x - systems[ptr].coord.x, 2) + Math.Pow(systems[scan].coord.y - systems[ptr].coord.y, 2) + Math.Pow(systems[scan].coord.z - systems[ptr].coord.z, 2));
                                 list.Add(next);
                             }
                             list.Sort();
                             Console.WriteLine();
                             for (int i = 1; i != 21; i++)
-                                Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + epochconvert((int)systems[list[i].place].last_scan_date));
+                                Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + systems[list[i].place].last_scan_date.ToShortDateString() + systems[list[i].place].last_scan_date.ToLongTimeString());
                             Console.WriteLine("Press [Enter] to continue");
                             Console.Read();
                             break;
@@ -130,17 +130,17 @@ namespace pop_system
         static string station_writeline(Json_reader.station_template station)
         {
             String ret = "";
-            ret += station.docking.HasValue ? ((bool)station.docking ? "D" : "X") : "?";
+            //ret += station.docking.HasValue ? ((bool)station.docking ? "D" : "X") : "?";
             ret += station.market.HasValue ? ((bool)station.market ? "M" : "-") : "?";
             ret += station.refuel.HasValue ? ((bool)station.refuel ? "F" : "-") : "?";
             ret += station.repair.HasValue ? ((bool)station.repair ? "R" : "-") : "?";
             ret += station.rearm.HasValue ? ((bool)station.rearm ? "A" : "-") : "?";
             ret += station.blackmarket.HasValue ? ((bool)station.blackmarket ? "B" : "-") : "?";
             ret += " " + 
-                (station.market_update.HasValue ? epochconvert((int)station.market_update).ToShortDateString() : 
-                (station.outfitting_update.HasValue ? epochconvert((int)station.outfitting_update).ToShortDateString() : 
-                (station.shipyard_update.HasValue ? epochconvert((int)station.shipyard_update).ToShortDateString() : 
-                (station.last_update.HasValue ? epochconvert((int)station.last_update).ToShortDateString() : "Unknown Date"))));
+                (station.market_update.HasValue ? station.market_update.Value.ToShortDateString() : 
+                (station.outfitting_update.HasValue ? station.outfitting_update.Value.ToShortDateString() : 
+                (station.shipyard_update.HasValue ? station.shipyard_update.Value.ToShortDateString() : 
+                (station.last_update.HasValue ? station.last_update.Value.ToShortDateString() : "Unknown Date"))));
             ret += " | " + station.name;
             return ret;
         }
