@@ -22,13 +22,12 @@ namespace pop_system
         {
             Json_reader j = new Json_reader();
             Json_reader.pop_system_template[] systems = j.read();
+            j = new Json_reader();
             bool list_stations = false;
             while (true)
             {
+                Array.Sort(systems);
                 int ptr = 0;
-                for (int scan = 1; scan != systems.Length; scan++)
-                    if (systems[ptr].last_scan_date > systems[scan].last_scan_date && systems[scan].done != true)
-                        ptr = scan;
                 string k = "";
                 while (!systems[ptr].done)
                 {
@@ -48,13 +47,14 @@ namespace pop_system
                     switch (k.ToLower()[0])
                     {
                         case 'r'://open ross page
-                            System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
+                            //System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
                             break;
                         case 'e'://open EDSM page
-                            //System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].edsm_id.ToString() + "/name");
+                            System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].id.ToString() + "/name");
                             break;
                         case 'd'://enter sector as done
                             systems[ptr].done = true;
+                            ptr++;
                             break;
                         case 'f'://find system
                             string search = k.Substring(2);
@@ -135,7 +135,19 @@ namespace pop_system
             ret += station.refuel.HasValue ? ((bool)station.refuel ? "F" : "-") : "?";
             ret += station.repair.HasValue ? ((bool)station.repair ? "R" : "-") : "?";
             ret += station.rearm.HasValue ? ((bool)station.rearm ? "A" : "-") : "?";
-            ret += station.blackmarket.HasValue ? ((bool)station.blackmarket ? "B" : "-") : "?";
+            ret += station.tuning.HasValue ? ((bool)station.tuning ? "T" : "-") : "?";
+            ret += " ";
+            ret += station.missions.HasValue ? ((bool)station.missions ? "m" : "-") : "?";
+            ret += station.contacts.HasValue ? ((bool)station.contacts ? "C" : "-") : "?";
+            ret += station.Interstellar_contact.HasValue ? ((bool)station.Interstellar_contact ? "I" : "-") : "?";
+            ret += station.cartographics.HasValue ? ((bool)station.cartographics ? "U" : "-") : "?";
+            ret += station.crew.HasValue ? ((bool)station.crew ? "c" : "-") : "?";
+            ret += " ";
+            ret += station.Search_and_Rescue.HasValue ? ((bool)station.Search_and_Rescue ? "RES" : "---") : "-?-";
+            ret += " ";
+            ret += station.Material_Trader.HasValue ? ((bool)station.Material_Trader ? "MAT" : "---") : "-?-";
+            ret += " ";
+            ret += station.Tech_Broker.HasValue ? ((bool)station.Tech_Broker ? "TEC" : "---") : "-?-";
             ret += " " + 
                 (station.market_update.HasValue ? station.market_update.Value.ToShortDateString() : 
                 (station.outfitting_update.HasValue ? station.outfitting_update.Value.ToShortDateString() : 
