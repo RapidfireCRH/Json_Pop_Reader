@@ -39,7 +39,7 @@ namespace pop_system
             public Nullable<int> settlement_security;
             public Nullable<int> body_id;
         }
-        public struct pop_system_template
+        public struct pop_system_template:IComparable<pop_system_template>
         {
             public int id;
             public int edsm_id;
@@ -56,6 +56,14 @@ namespace pop_system
             public List<station_template> stations;
             public int edsm_body_count;
             public int eddb_body_count;
+            public int CompareTo(pop_system_template other)
+            {
+                return this.last_scan_date.CompareTo(other.last_scan_date);
+            }
+            public double distance(pop_system_template other)
+            {
+                return Math.Sqrt(Math.Pow(this.coordinates[0] - other.coordinates[0], 2) + Math.Pow(this.coordinates[1]- other.coordinates[1] , 2) + Math.Pow(this.coordinates[2] - other.coordinates[2], 2));
+            }
         }
         /// <summary>
         /// Main load for Sectors and Stations
