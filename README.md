@@ -56,3 +56,17 @@ Feel free to raise a new issue for any features/ issues you might have.
 More detailed explination on what is going on.
 
 This program downloads all populated systems from EDSM and sorts them based on last updated date. It will return the earliest dates along with some information about the sector. At this point you can enter any of the above commands to change or open at your leisure. If you enter multiple commands, it will only execute the first one.
+
+    LICENSE:
+    Json_Pop_Reader is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Json_Pop_Reader is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Json_Pop_Reader.  If not, see<https://www.gnu.org/licenses/>.
