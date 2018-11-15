@@ -35,8 +35,10 @@ namespace pop_system
                     Console.WriteLine("Entry" + ptr + " | ID - " + systems[ptr].id + " | Last Update: " + systems[ptr].last_scan_date.ToShortDateString() + " " + systems[ptr].last_scan_date.ToLongTimeString());
                     Console.WriteLine("System Name: " + systems[ptr].name);
                     Console.WriteLine("Pop: " + (systems[ptr].population == -1 ? "Unknown" : systems[ptr].population.ToString()));
-                    Console.WriteLine("System Gov: " + (Json_reader.government_type)systems[ptr].government);
-                    Console.WriteLine("Security: " + (Json_reader.security_type)systems[ptr].security);
+                    Console.WriteLine("System Gov: " + systems[ptr].government);
+                    Console.WriteLine("Security: " + systems[ptr].security);
+                    Console.WriteLine("Number of Bodies:");
+                    Console.WriteLine("  EDSM: " + (systems[ptr].edsm_body_count == -1 ? "Unknown" : systems[ptr].edsm_body_count.ToString()));
                     Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
                     if (list_stations)
                         foreach (Json_reader.station_template x in systems[ptr].stations)
