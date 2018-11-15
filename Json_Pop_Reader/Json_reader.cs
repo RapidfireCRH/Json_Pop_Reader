@@ -81,7 +81,10 @@ namespace pop_system
             {
                 return this.last_scan_date.CompareTo(other.last_scan_date);
             }
-        }
+            public double distance(pop_system_template other)
+            {
+                return Math.Sqrt(Math.Pow(this.coord.x - other.coord.x, 2) + Math.Pow(this.coord.y - other.coord.y, 2) + Math.Pow(this.coord.z - other.coord.z, 2));
+            }
         public pop_system_template[] read()
         {
             Console.WriteLine("***********************************************************");
