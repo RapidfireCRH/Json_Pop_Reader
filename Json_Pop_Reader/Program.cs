@@ -38,7 +38,7 @@ namespace pop_system
                     Console.WriteLine("System Gov: " + systems[ptr].government);
                     Console.WriteLine("Security: " + systems[ptr].security);
                     Console.WriteLine("Number of Bodies:");
-                    Console.WriteLine("  EDSM: " + (systems[ptr].edsm_body_count == -1 ? "Unknown" : systems[ptr].edsm_body_count.ToString()));
+                    Console.WriteLine("  EDSM: " + (systems[ptr].body_count == -1 ? "Unknown" : systems[ptr].body_count.ToString()));
                     Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
                     if (list_stations)
                         foreach (Json_reader.station_template x in systems[ptr].stations)

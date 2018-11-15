@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Newtonsoft.Json.Linq;
 
 namespace pop_system
@@ -76,6 +77,7 @@ namespace pop_system
             public faction_template controlling_faction;
             public List<station_template> stations;
             public DateTime last_scan_date;
+            public int body_count;
             public bool done;
             public int CompareTo(pop_system_template other)
             {
@@ -340,6 +342,24 @@ namespace pop_system
                 File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
                 return ret;
             }
-        }        
+        }
+        public int edsmbodies(string name)
+        {
+            try
+            {
+                string temp = "";
+                using (WebClient client = new WebClient())
+                    temp = client.DownloadString("https://www.edsm.net/api-system-v1/bodies?systemName=" + name);
+                dynamic stuff = JObject.Parse(temp);
+                if (stuff.bodies.Count > 0)//Wanted to say unknown for 0 bodies, since each star has atleast one body (host star)
+                    return stuff.bodies.Count;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unable to get body count from EDSM. " + e.Message + Environment.NewLine + e.StackTrace);
+                Thread.Sleep(2000);
+            }
+            return -1;
+        }
     }
 }
