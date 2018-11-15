@@ -51,7 +51,7 @@ namespace pop_system
             public Nullable<DateTime> market_update;
             public Nullable<int> body_id;
         }
-        public struct pop_system_template:IComparable<pop_system_template>
+        public struct pop_system_template : IComparable<pop_system_template>
         {
             public int id;//edsm ID
             public Nullable<long> id64;
@@ -85,6 +85,7 @@ namespace pop_system
             {
                 return Math.Sqrt(Math.Pow(this.coord.x - other.coord.x, 2) + Math.Pow(this.coord.y - other.coord.y, 2) + Math.Pow(this.coord.z - other.coord.z, 2));
             }
+        }
         public pop_system_template[] read()
         {
             Console.WriteLine("***********************************************************");
@@ -128,7 +129,7 @@ namespace pop_system
                         if (stuff.stations[i].type == null)
                             bldr.type = station_type.unknown;
                         else
-                            bldr.type = recast(stuff.stations[i].type);
+                            bldr.type = recaststation(stuff.stations[i].type);
                         bldr.name = stuff.stations[i].name;
                         bldr.arrival_distance = stuff.stations[i].distanceToArrival;
                         if (stuff.stations[i].allegiance == null)
@@ -284,7 +285,7 @@ namespace pop_system
             //Console.Clear();
             //return rtn;
         }
-        station_type recast(object obj)
+        station_type recaststation(object obj)
         {
             switch(obj.ToString())
             {
@@ -339,6 +340,6 @@ namespace pop_system
                 File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
                 return ret;
             }
-        }
+        }        
     }
 }
