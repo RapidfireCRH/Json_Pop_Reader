@@ -20,6 +20,10 @@ namespace pop_system
         }
         static void Main(string[] args)
         {
+            Console.WriteLine("Json_Pop_Reader");
+            Console.WriteLine("V1.1 EDSM Edition");
+            for (int i = 0; i != 5; i++)
+                Console.WriteLine();
             Json_reader j = new Json_reader();
             Json_reader.pop_system_template[] systems = j.read();
             j = new Json_reader();
@@ -49,7 +53,7 @@ namespace pop_system
                     switch (k.ToLower()[0])
                     {
                         case 'r'://open ross page
-                            //System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
+                            System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
                             break;
                         case 'e'://open EDSM page
                             System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].id.ToString() + "/name");
@@ -133,20 +137,33 @@ namespace pop_system
                             Console.WriteLine("  c - Find the closest 20 systems ");
                             Console.WriteLine("  i - Import done.txt list of names");
                             Console.WriteLine("  x - Export done.txt with list of done names");
-                            Console.WriteLine("  l - Toggle list of stations (Key below)");
+                            Console.WriteLine("  l - Toggle list of stations (Key on next page)");
                             Console.WriteLine("  b - Reload body count");
                             Console.WriteLine("  h - Show this help menu");
                             Console.WriteLine();
+                            Console.Write("(1/2) Press any key to continue.");
+                            Console.ReadKey();
+                            Console.Clear();
+                            Console.WriteLine();
                             Console.WriteLine("Station Key:");
-                            Console.WriteLine("  ? means unknown on EDDB/ROSS.");
-                            Console.WriteLine("  D - Docking allowed; X - Docking not allowed");
+                            Console.WriteLine("  ? means unknown on EDSM.");
                             Console.WriteLine("  M - Has Market");
                             Console.WriteLine("  F - Has Refuel");
                             Console.WriteLine("  R - Has Repair");
                             Console.WriteLine("  A - Has Rearm");
-                            Console.WriteLine("  B - Has Blackmarket");
+                            Console.WriteLine("  T - Has Tuning (Refit)");
+                            Console.WriteLine("  ");
+                            Console.WriteLine("  m - Has Missions");
+                            Console.WriteLine("  C - Has Contacts");
+                            Console.WriteLine("  I - Has Intersteller Contacts");
+                            Console.WriteLine("  U - Has Universal Catrographics");
+                            Console.WriteLine("  c - Has Crew");
+                            Console.WriteLine("  ");
+                            Console.WriteLine("  RES - Has Search and Rescue");
+                            Console.WriteLine("  MAT - Has Material Trader");
+                            Console.WriteLine("  TEC - Has Technology Broker");
                             Console.WriteLine();
-                            Console.Write("Press any key to continue.");
+                            Console.Write("(2/2) Press any key to continue.");
                             Console.ReadKey();
                             break;
                         default:
