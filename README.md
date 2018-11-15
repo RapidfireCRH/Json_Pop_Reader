@@ -25,7 +25,7 @@ Commands are as follows:
   
   (l)ist stations - Station list toggle. Stations follow the following format:
           
-          DMFRAT mCIUc TEC RES MAT  1/1/1970 | Station_name
+          DMFRAT mCIUc RES MAT TEC  1/1/1970 | Station_name
 
           Station Key:
             ? means unknown on EDSM.
