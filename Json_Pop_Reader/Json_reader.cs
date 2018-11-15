@@ -55,6 +55,7 @@ namespace pop_system
         public struct pop_system_template : IComparable<pop_system_template>
         {
             public int id;//edsm ID
+            public int eddbid;
             public Nullable<long> id64;
             public string name;
             public struct coord_st
@@ -237,7 +238,21 @@ namespace pop_system
                 rtn[spot++].last_scan_date = DateTime.Parse(temp);
             }
             Console.WriteLine("Step 2 of 2: Loading EDDB Info");
-
+            file_contents = EDDBdownload("https://eddb.io/archive/v5/systems_populated.json");
+            foreach (string x in file_contents)
+            {
+                dynamic stuff = JObject.Parse(x);
+                for (int i = 0; i != rtn.Length; i++)
+                {
+                    if (rtn[i].eddbid != 0)
+                        continue;
+                    if (stuff.edsm_id == rtn[i].id)
+                    {
+                        rtn[i].eddbid = stuff.id;
+                        break;
+                    }
+                }
+            }
             return rtn;
             //Console.WriteLine("Step 2 of 2: Loading Stations");
             //file_contents = downloader("https://eddb.io/archive/v5/stations.json");
@@ -312,6 +327,20 @@ namespace pop_system
                 default:
                     throw new NotImplementedException("Uknown starport type: " + obj);
             }
+        }
+        public string[] EDDBdownload(string addr)
+        {
+            string temp = "";
+            using (WebClient client = new WebClient())
+                temp = client.DownloadString(addr);
+            temp = temp.Substring(1, temp.Length - 2);//Remove [ and ]
+            temp = temp.Replace("},{\"id\"", "}" + Environment.NewLine + "{\"id\"");//move each entry into a new line
+
+            //Write text to read (faster then going line per line)
+            File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"), temp);
+            string[] ret = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
+            File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
+            return ret;
         }
         public string[] downloader(string addr)
         {
