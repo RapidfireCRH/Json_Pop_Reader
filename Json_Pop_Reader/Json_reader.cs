@@ -58,7 +58,6 @@ namespace pop_system
             public int eddbid;
             public Nullable<long> id64;
             public string name;
-
             public struct coord_st
             {
                 public float x;

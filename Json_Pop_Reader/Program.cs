@@ -44,7 +44,7 @@ namespace pop_system
                 Array.Sort(systems);
                 int ptr = 0;
                 string k = "";
-                systems[ptr].edsm_body_count = j.edsmdownloader(systems[ptr].name);
+                systems[ptr].body_count = j.edsmbodies(systems[ptr].name);
                 while (!systems[ptr].done)
                 {
                     Console.Clear();
