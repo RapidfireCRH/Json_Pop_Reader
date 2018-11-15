@@ -47,7 +47,7 @@ namespace pop_system
         static void Main(string[] args)
         {
             Console.WriteLine("Json_Pop_Reader");
-            Console.WriteLine("V1.1 EDSM Edition");
+            Console.WriteLine("V2.0 EDSM Edition");
             for (int i = 0; i != 5; i++)
                 Console.WriteLine();
             Json_reader j = new Json_reader();
