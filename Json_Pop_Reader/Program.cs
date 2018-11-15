@@ -9,6 +9,9 @@ namespace pop_system
 {
     class Program
     {
+        /// <summary>
+        /// Distance defination for closest query
+        /// </summary>
         struct distance_template : IComparable<distance_template>
         {
             public int place;
@@ -18,6 +21,14 @@ namespace pop_system
                 return this.distance.CompareTo(other.distance);
             }
         }
+        /// <summary>
+        /// Find old systems and displays known data
+        /// </summary>
+        /// v1.03 - help added, catching of errors
+        /// v1.02 - Export, import and station support added
+        /// v1.01 - closest and find commands added
+        /// v1.0 - initial release
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             Console.WriteLine("Json_Pop_Reader");
@@ -33,6 +44,7 @@ namespace pop_system
                 Array.Sort(systems);
                 int ptr = 0;
                 string k = "";
+                systems[ptr].edsm_body_count = j.edsmdownloader(systems[ptr].name);
                 while (!systems[ptr].done)
                 {
                     Console.Clear();
@@ -46,7 +58,9 @@ namespace pop_system
                     Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
                     if (list_stations)
                         foreach (Json_reader.station_template x in systems[ptr].stations)
-                            Console.WriteLine(station_writeline(x));
+                            Console.WriteLine("  " + station_writeline(x));
+                    Console.WriteLine();
+                    Console.Write("Enter Command (h for help):");
                     k = Console.ReadLine();
                     if (k.Length == 0)
                         continue;
@@ -111,6 +125,9 @@ namespace pop_system
                                 for (int i = 0; i != systems.Length; i++)
                                     if (systems[i].id.ToString() == x)
                                         systems[i].done = true;
+                            Console.WriteLine();
+                            Console.WriteLine("Load completed.");
+                            Thread.Sleep(4000);
                             break;
                         case 'x'://export list of done systems
                             List<string> write = new List<string>();
@@ -120,8 +137,11 @@ namespace pop_system
                             if (File.Exists("done.txt"))
                                 File.Delete("done.txt");
                             File.WriteAllLines("done.txt", write);
+                            Console.WriteLine();
+                            Console.WriteLine("Save completed.");
+                            Thread.Sleep(4000);
                             break;
-                        case 'l':
+                        case 'l'://toggle listing of stations
                             list_stations = !list_stations;
                             break;
                         case 'b':

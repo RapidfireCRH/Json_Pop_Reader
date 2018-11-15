@@ -11,7 +11,7 @@ namespace pop_system
 
     class Json_reader
     {
-        bool testing_toggle = true;
+        bool testing_toggle = false;
         public enum government_type {unknown = -1, None, Anarchy, Communism, Confederacy, Cooperative, Corporate, Democracy, Dictatorship, Feudal, Patronage, Prison, Prison_colony, Theocracy, Workshop_Engineer }
         public enum security_type { unknown = -1, Anarchy, low, medium, high }
         public enum pad_size { unknown = -1, none, Medium, Large}
@@ -58,6 +58,7 @@ namespace pop_system
             public int eddbid;
             public Nullable<long> id64;
             public string name;
+
             public struct coord_st
             {
                 public float x;
@@ -89,6 +90,10 @@ namespace pop_system
                 return Math.Sqrt(Math.Pow(this.coord.x - other.coord.x, 2) + Math.Pow(this.coord.y - other.coord.y, 2) + Math.Pow(this.coord.z - other.coord.z, 2));
             }
         }
+        /// <summary>
+        /// Main load for Sectors and Stations
+        /// </summary>
+        /// <returns>Main data struct for application</returns>
         public pop_system_template[] read()
         {
             Console.WriteLine("***********************************************************");
@@ -378,11 +383,13 @@ namespace pop_system
             {
                 string temp = "";
                 using (WebClient client = new WebClient())
+
                     temp = client.DownloadString("https://www.edsm.net/api-system-v1/bodies?systemName=" + name);
                 dynamic stuff = JObject.Parse(temp);
                 if (stuff.bodies.Count > 0)//Wanted to say unknown for 0 bodies, since each star has atleast one body (host star)
                     return stuff.bodies.Count;
             }
+
             catch (Exception e)
             {
                 Console.WriteLine("Unable to get body count from EDSM. " + e.Message + Environment.NewLine + e.StackTrace);
