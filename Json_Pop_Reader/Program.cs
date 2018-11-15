@@ -54,7 +54,7 @@ namespace pop_system
                     Console.WriteLine("Security: " + (Json_reader.security)systems[ptr].security_id);
                     Console.WriteLine("Number of Bodies:");
                     Console.WriteLine("  EDSM: " + (systems[ptr].edsm_body_count == -1 ? "Unknown" : systems[ptr].edsm_body_count.ToString()));
-                    Console.WriteLine("  EDDB: " + (systems[ptr].eddb_body_count == -1 ? "Unknown" : systems[ptr].eddb_body_count.ToString()));
+                    Console.WriteLine("  EDDB: Unknown");
                     Console.WriteLine("Number of Stations: " + systems[ptr].stations.Count);
                     if (list_stations)
                         foreach (Json_reader.station_template x in systems[ptr].stations)
