@@ -30,7 +30,7 @@ namespace pop_system
         struct distance_template : IComparable<distance_template>
         {
             public int place;
-            public float distance;
+            public double distance;
             public int CompareTo(distance_template other)
             {
                 return this.distance.CompareTo(other.distance);
@@ -50,14 +50,34 @@ namespace pop_system
             Console.WriteLine("V1.1 EDSM Edition");
             for (int i = 0; i != 5; i++)
                 Console.WriteLine();
+
             Json_reader j = new Json_reader();
             Json_reader.pop_system_template[] systems = j.read();
             j = new Json_reader();
+            
+            Array.Sort(systems);
+            int ptr = 0;
+            bool foundonfind = false;
             bool list_stations = false;
             while (true)
             {
-                Array.Sort(systems);
-                int ptr = 0;
+                int lastptr = ptr;
+                ptr = 0;
+                int search = 0;
+                distance_template[] scan = new distance_template[12];
+                for(int i = 0;i!= 12;i++)
+                {
+                    while (systems[search++].done) ;
+                    scan[i].place = search-1;
+                    scan[i].distance = systems[search - 1].distance(systems[lastptr]);
+                }
+                Array.Sort(scan);
+                ptr = scan[0].place;
+                if (foundonfind)
+                {
+                    ptr = lastptr;
+                    foundonfind = false;
+                }
                 string k = "";
                 systems[ptr].body_count = j.edsmbodies(systems[ptr].name);
                 while (!systems[ptr].done)
@@ -82,29 +102,28 @@ namespace pop_system
                     switch (k.ToLower()[0])
                     {
                         case 'r'://open ross page
-                            System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
+                            System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].eddbid.ToString());
                             break;
                         case 'e'://open EDSM page
                             System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].id.ToString() + "/name");
                             break;
                         case 'd'://enter sector as done
                             systems[ptr].done = true;
-                            ptr++;
                             break;
                         case 'f'://find system
-                            string search = k.Substring(2);
-                            bool found = false;
+                            string search2 = k.Substring(2);
+                            foundonfind = false;
                             for (int i = 0; i != systems.Length; i++)
                             {
-                                if (systems[i].name.ToLower() == search.ToLower())
+                                if (systems[i].name.ToLower() == search2.ToLower())
                                 {
                                     ptr = i;
                                     systems[ptr].done = false;
-                                    found = true;
+                                    foundonfind = true;
                                     break;
                                 }
                             }
-                            if (!found)
+                            if (!foundonfind)
                             {
                                 Console.WriteLine("");
                                 Console.WriteLine(search + " was not found.");
@@ -113,11 +132,11 @@ namespace pop_system
                             break;
                         case 'c'://find closest systems
                             List<distance_template> list = new List<distance_template>();
-                            for (int scan = 0; scan != systems.Length; scan++)
+                            for (int scan2 = 0; scan2 != systems.Length; scan2++)
                             {
                                 distance_template next = new distance_template();
-                                next.place = scan;
-                                next.distance = (float)Math.Sqrt(Math.Pow(systems[scan].coord.x - systems[ptr].coord.x, 2) + Math.Pow(systems[scan].coord.y - systems[ptr].coord.y, 2) + Math.Pow(systems[scan].coord.z - systems[ptr].coord.z, 2));
+                                next.place = scan2;
+                                next.distance = systems[ptr].distance(systems[scan2]);
                                 list.Add(next);
                             }
                             list.Sort();

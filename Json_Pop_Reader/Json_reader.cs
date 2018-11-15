@@ -266,6 +266,9 @@ namespace pop_system
                         continue;
                     if (stuff.edsm_id == rtn[i].id)
                     {
+                        string tmp = stuff.name;
+                        if (rtn[i].name != tmp)
+                            Thread.Sleep(1);
                         rtn[i].eddbid = stuff.id;
                         break;
                     }
