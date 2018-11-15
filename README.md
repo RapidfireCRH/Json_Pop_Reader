@@ -1,7 +1,7 @@
 # Json_Pop_Reader
-Takes populated system data from EDDB and looks for old system information
+Takes populated system data from EDDM and looks for old system information
 
-Place Json_Pop_Reader.exe and Newtonsoft.Json.dll in the same folder. Launch Json_Pop_Reader.exe and it will load the latest Json into memory.
+Place Json_Pop_Reader.exe and Newtonsoft.Json.dll in the same folder. Launch Json_Pop_Reader.exe and it will load the latest Json into memory. BE CAREFUL - THIS PROGRAM WILL USE 4+GB ON STARTUP. THIS WILL ONLY WORK ON 64bit Systems.
 
 Commands are as follows:
 
@@ -25,20 +25,26 @@ Commands are as follows:
   
   (l)ist stations - Station list toggle. Stations follow the following format:
           
-          DMFRAB 1/1/1970 | Station_name
-          
-          D | X - Docking permissions, x when unavailable
+          DMFRAT mCIUc TEC RES MAT  1/1/1970 | Station_name
 
-          M - Market
+          Station Key:
+            ? means unknown on EDSM.
+            M - Has Market
+            F - Has Refuel
+            R - Has Repair
+            A - Has Rearm
+            T - Has Tuning (Refit)
 
-          F - Refuel
+            m - Has Missions
+            C - Has Contacts
+            I - Has Intersteller Contacts
+            U - Has Universal Catrographics
+            c - Has Crew
 
-          R - Repair
-
-          A - Rearm
-
-          B - Blackmarket
-
+            TEC - Has Technology Broker
+            RES - Has Search and Rescue
+            MAT - Has Material Trader
+            
           Date - Date from Marketupdate > outfittingupdate > shipyardupdate > last_update in that order
 
           Name - Station name
@@ -49,4 +55,4 @@ Feel free to raise a new issue for any features/ issues you might have.
 
 More detailed explination on what is going on.
 
-This program downloads all populated systems from EDDB.io and sorts them based on last updated date. It will return the earliest dates along with some information about the sector. At this point you can enter any of the above commands to change or open at your leisure. If you enter multiple commands, it will only execute the first one.
+This program downloads all populated systems from EDSM and sorts them based on last updated date. It will return the earliest dates along with some information about the sector. At this point you can enter any of the above commands to change or open at your leisure. If you enter multiple commands, it will only execute the first one.
