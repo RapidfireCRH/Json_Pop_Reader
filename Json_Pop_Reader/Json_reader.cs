@@ -93,15 +93,13 @@ namespace pop_system
             Console.WriteLine("***********************************************************");
             Console.WriteLine("                    Loading... Please Wait");
             Console.WriteLine("***********************************************************");
-            Console.WriteLine("Step 1 of 2: Loading Sectors");
+            Console.WriteLine("Step 1 of 2: Loading EDSM Info");
             string[] file_contents = downloader("https://www.edsm.net/dump/systemsPopulated.json");
             pop_system_template[] rtn = new pop_system_template[file_contents.Length];
             int spot = 0;
             string temp = "";
             foreach (string x in file_contents)
             {
-                if (x.Contains("\"stations\":[{"))
-                    temp = "";
                 dynamic stuff = JObject.Parse(x);
                 rtn[spot].id = stuff.id;
                 rtn[spot].id64 = stuff.id64;
@@ -188,34 +186,34 @@ namespace pop_system
                             string tmp = stuff.stations[i].otherServices[j];
                             switch (tmp)
                             {
-                                case "Black Market"://
+                                case "Black Market":
                                     bldr.blackmarket = true;
                                     continue;
-                                case "Restock"://
+                                case "Restock":
                                     bldr.rearm = true;
                                     continue;
-                                case "Refuel"://
+                                case "Refuel":
                                     bldr.refuel = true;
                                     continue;
-                                case "Repair"://
+                                case "Repair":
                                     bldr.repair = true;
                                     continue;
-                                case "Contacts"://
+                                case "Contacts":
                                     bldr.contacts = true;
                                     continue;
-                                case "Universal Cartographics"://
+                                case "Universal Cartographics":
                                     bldr.cartographics = true;
                                     continue;
-                                case "Missions"://
+                                case "Missions":
                                     bldr.missions = true;
                                     continue;
-                                case "Crew Lounge"://
+                                case "Crew Lounge":
                                     bldr.crew = true;
                                     continue;
-                                case "Tuning"://
+                                case "Tuning":
                                     bldr.tuning = true;
                                     continue;
-                                case "Interstellar Factors Contact"://
+                                case "Interstellar Factors Contact":
                                     bldr.Interstellar_contact = true;
                                     continue;
                                 case "Search and Rescue":
@@ -238,6 +236,8 @@ namespace pop_system
                 temp = stuff.date;
                 rtn[spot++].last_scan_date = DateTime.Parse(temp);
             }
+            Console.WriteLine("Step 2 of 2: Loading EDDB Info");
+
             return rtn;
             //Console.WriteLine("Step 2 of 2: Loading Stations");
             //file_contents = downloader("https://eddb.io/archive/v5/stations.json");

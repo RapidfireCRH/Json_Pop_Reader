@@ -120,6 +120,40 @@ namespace pop_system
                         case 'l':
                             list_stations = !list_stations;
                             break;
+                        case 'b':
+                            systems[ptr].body_count = j.edsmbodies(systems[ptr].name);
+                            break;
+                        case 'h'://Help dialog
+                            Console.Clear();
+                            Console.WriteLine("List of commands:");
+                            Console.WriteLine("  r - Opens ROSS page for currently selected star");
+                            Console.WriteLine("  e - Opens EDSM page for currently selected star");
+                            Console.WriteLine("  d - Marks star as done (automatically finds next oldest star)");
+                            Console.WriteLine("  f (star name) - Finds the named star");
+                            Console.WriteLine("  c - Find the closest 20 systems ");
+                            Console.WriteLine("  i - Import done.txt list of names");
+                            Console.WriteLine("  x - Export done.txt with list of done names");
+                            Console.WriteLine("  l - Toggle list of stations (Key below)");
+                            Console.WriteLine("  b - Reload body count");
+                            Console.WriteLine("  h - Show this help menu");
+                            Console.WriteLine();
+                            Console.WriteLine("Station Key:");
+                            Console.WriteLine("  ? means unknown on EDDB/ROSS.");
+                            Console.WriteLine("  D - Docking allowed; X - Docking not allowed");
+                            Console.WriteLine("  M - Has Market");
+                            Console.WriteLine("  F - Has Refuel");
+                            Console.WriteLine("  R - Has Repair");
+                            Console.WriteLine("  A - Has Rearm");
+                            Console.WriteLine("  B - Has Blackmarket");
+                            Console.WriteLine();
+                            Console.Write("Press any key to continue.");
+                            Console.ReadKey();
+                            break;
+                        default:
+                            Console.WriteLine("");
+                            Console.WriteLine("Bad Command :" + k[0]);
+                            Thread.Sleep(2000);
+                            break;
                     }
                 }
 
