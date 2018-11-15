@@ -41,9 +41,9 @@ Commands are as follows:
             U - Has Universal Catrographics
             c - Has Crew
 
-            TEC - Has Technology Broker
             RES - Has Search and Rescue
             MAT - Has Material Trader
+            TEC - Has Technology Broker
             
           Date - Date from Marketupdate > outfittingupdate > shipyardupdate > last_update in that order
 
