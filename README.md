@@ -1,5 +1,5 @@
 # Json_Pop_Reader
-Takes populated system data from EDDM and looks for old system information
+Takes populated system data from EDSM and looks for old system information
 
 Place Json_Pop_Reader.exe and Newtonsoft.Json.dll in the same folder. Launch Json_Pop_Reader.exe and it will load the latest Json into memory. BE CAREFUL - THIS PROGRAM WILL USE 4+GB ON STARTUP. THIS WILL ONLY WORK ON 64bit Systems.
 
