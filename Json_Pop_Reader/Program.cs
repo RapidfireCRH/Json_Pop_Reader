@@ -48,7 +48,7 @@ namespace pop_system
         {
             //anounce version
             Console.WriteLine("Json_Pop_Reader");
-            Console.WriteLine("V2.0a BETA EDSM Edition");
+            Console.WriteLine("V2.0 BETA 2 EDSM Edition");
             for (int i = 0; i != 5; i++)
                 Console.WriteLine();
 
