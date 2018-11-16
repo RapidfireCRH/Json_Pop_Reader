@@ -96,8 +96,32 @@ namespace pop_system
             public bool done;
             public int CompareTo(pop_system_template other)
             {
-                return this.last_scan_date.CompareTo(other.last_scan_date);
+                if (!(this.changeorder.HasValue))
+                    changeorder = false;
+                if (changeorder.Value)//sort by earliest station
+                    return this.EarliestStation().CompareTo(other.EarliestStation());
+                else//sort by last scan date
+                    return this.last_scan_date.CompareTo(other.last_scan_date);
             }
+
+            public DateTime EarliestStation()
+            {
+                DateTime rtn = this.last_scan_date;
+                foreach(station_template s in stations)
+                {
+                    
+                    if (s.last_update.HasValue && rtn > s.last_update)
+                        rtn = s.last_update.Value;
+                    if (s.shipyard_update.HasValue && rtn > s.shipyard_update)
+                        rtn = s.shipyard_update.Value;
+                    if (s.outfitting_update.HasValue && rtn > s.outfitting_update)
+                        rtn = s.outfitting_update.Value;
+                    if (s.market_update.HasValue && rtn > s.market_update)
+                        rtn = s.market_update.Value;
+                }
+                return rtn;
+            }
+            public Nullable<bool> changeorder;
             public double distance(pop_system_template other)
             {
                 return Math.Sqrt(Math.Pow(this.coord.x - other.coord.x, 2) + Math.Pow(this.coord.y - other.coord.y, 2) + Math.Pow(this.coord.z - other.coord.z, 2));

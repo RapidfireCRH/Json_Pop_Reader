@@ -46,41 +46,62 @@ namespace pop_system
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            //anounce version
             Console.WriteLine("Json_Pop_Reader");
-            Console.WriteLine("V2.0 BETA EDSM Edition");
+            Console.WriteLine("V2.0a BETA EDSM Edition");
             for (int i = 0; i != 5; i++)
                 Console.WriteLine();
 
+            //Read in systems
             Json_reader j = new Json_reader();
             Json_reader.pop_system_template[] systems = j.read();
-            j = new Json_reader();
+            j = new Json_reader(); // attempt to release all items in load for memory purposes
             
+            //Sort by latest update date
             Array.Sort(systems);
-            int ptr = 0;
-            bool foundonfind = false;
-            bool list_stations = false;
+
+            //Read done.txt if it exists
+            if (File.Exists("done.txt"))
+            {
+                string[] read = File.ReadAllLines("done.txt");
+                foreach (string x in read)
+                    for (int i = 0; i != systems.Length; i++)
+                        if (systems[i].id.ToString() == x)
+                            systems[i].done = true;
+            }
+
+            //force garbage collection to reclaim ram
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            
+            int ptr = 0;//system pointer for current system
+            bool foundonfind = false;//Find flag to keep found system in selection
+            bool list_stations = false;//List stations toggle
+            bool forcereset = false;//force reset for resort
             while (true)
             {
-                int lastptr = ptr;
-                ptr = 0;
-                int search = 0;
-                distance_template[] scan = new distance_template[12];
-                for(int i = 0;i!= 12;i++)
+                if (!foundonfind)
                 {
-                    while (systems[search++].done) ;
-                    scan[i].place = search-1;
-                    scan[i].distance = systems[search - 1].distance(systems[lastptr]);
+                    int lastptr = ptr;
+                    forcereset = false;
+                    ptr = 0;
+                    int search = 0;
+                    distance_template[] scan = new distance_template[12];
+                    for (int i = 0; i != 12; i++)
+                    {
+                        while (systems[search++].done) ;
+                        scan[i].place = search - 1;
+                        scan[i].distance = systems[search - 1].distance(systems[lastptr]);
+                    }
+                    Array.Sort(scan);
+                    ptr = scan[0].place;
                 }
-                Array.Sort(scan);
-                ptr = scan[0].place;
-                if (foundonfind)
-                {
-                    ptr = lastptr;
+                else
                     foundonfind = false;
-                }
                 string k = "";
                 systems[ptr].body_count = j.edsmbodies(systems[ptr].name);
-                while (!systems[ptr].done)
+                while (!systems[ptr].done && !forcereset )
                 {
                     Console.Clear();
                     Console.WriteLine("Entry" + ptr + " | ID - " + systems[ptr].id + " | Last Update: " + systems[ptr].last_scan_date.ToShortDateString() + " " + systems[ptr].last_scan_date.ToLongTimeString());
@@ -126,7 +147,7 @@ namespace pop_system
                             if (!foundonfind)
                             {
                                 Console.WriteLine("");
-                                Console.WriteLine(search + " was not found.");
+                                Console.WriteLine(search2 + " was not found.");
                                 Thread.Sleep(4000);
                             }
                             break;
@@ -178,8 +199,23 @@ namespace pop_system
                         case 'l'://toggle listing of stations
                             list_stations = !list_stations;
                             break;
-                        case 'b':
+                        case 'b'://reload bodies
                             systems[ptr].body_count = j.edsmbodies(systems[ptr].name);
+                            break;
+                        case 's'://change sort order
+                            forcereset = true;
+                            if (!systems[0].changeorder.Value)
+                            {
+                                for (int i = 0; i != systems.Length; i++)
+                                    systems[i].changeorder = true;
+                                Array.Sort(systems);
+                            }
+                            else
+                            {
+                                for (int i = 0; i != systems.Length; i++)
+                                    systems[i].changeorder = false;
+                                Array.Sort(systems);
+                            }
                             break;
                         case 'h'://Help dialog
                             Console.Clear();
@@ -193,12 +229,12 @@ namespace pop_system
                             Console.WriteLine("  x - Export done.txt with list of done names");
                             Console.WriteLine("  l - Toggle list of stations (Key on next page)");
                             Console.WriteLine("  b - Reload body count");
+                            Console.WriteLine("  s - Toggle sort order [By Star Last update, By oldest date between star and stations]");
                             Console.WriteLine("  h - Show this help menu");
                             Console.WriteLine();
                             Console.Write("(1/2) Press any key to continue.");
                             Console.ReadKey();
                             Console.Clear();
-                            Console.WriteLine();
                             Console.WriteLine("Station Key:");
                             Console.WriteLine("  ? means unknown on EDSM.");
                             Console.WriteLine("  M - Has Market");
