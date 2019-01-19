@@ -22,7 +22,6 @@ using Newtonsoft.Json.Linq;
 
 namespace pop_system
 {
-
     class Json_reader
     {
         bool testing_toggle = false;
