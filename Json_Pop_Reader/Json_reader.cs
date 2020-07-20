@@ -14,7 +14,9 @@
 //    along with Json_Pop_Reader.  If not, see<https://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -25,12 +27,12 @@ namespace pop_system
     class Json_reader
     {
         bool testing_toggle = false;
-        public enum government_type {unknown = -1, None, Anarchy, Communism, Confederacy, Cooperative, Corporate, Democracy, Dictatorship, Feudal, Patronage, Prison, Prison_colony, Theocracy, Workshop_Engineer }
+        public enum government_type {unknown = -1, None, Anarchy, Communism, Confederacy, Cooperative, Corporate, Democracy, Dictatorship, Feudal, Patronage, Prison, Prison_colony, Theocracy, Workshop_Engineer, Fleet_Carrier }
         public enum security_type { unknown = -1, Anarchy, low, medium, high }
         public enum pad_size { unknown = -1, none, Medium, Large}
-        public enum station_type { unknown = -1, Coriolis_Starport,  Ocellus_Starport, Orbis_Starport, Outpost, Scientific_Outpost, Planetary_Outpost, Planetary_Port,  Megaship, Asteroid_Base }
+        public enum station_type { unknown = -1, Coriolis_Starport,  Ocellus_Starport, Orbis_Starport, Outpost, Scientific_Outpost, Planetary_Outpost, Planetary_Port,  Megaship, Asteroid_Base, Fleet_Carrier }
         public enum allegiance_type { unknown = -1, None, Independent, Federation, Empire, Alliance, Pilots_Federation}
-        public enum economy_type { unknown = -1, Agriculture, Colony, Damaged, Extraction, High_Tech, Industrial, Military, Prison, Refinery, Repair, Rescue, Service, Terraforming, Tourism }
+        public enum economy_type { unknown = -1, Agriculture, Colony, Damaged, Extraction, High_Tech, Industrial, Military, Prison, Refinery, Repair, Rescue, Service, Terraforming, Tourism, Fleet_Carrier }
         public struct station_template
         {
             public int id;
@@ -112,7 +114,7 @@ namespace pop_system
             Console.WriteLine("                    Loading... Please Wait");
             Console.WriteLine("***********************************************************");
             Console.WriteLine("Step 1 of 2: Loading EDSM Info");
-            string[] file_contents = downloader("https://www.edsm.net/dump/systemsPopulated.json");
+            string[] file_contents = downloader("https://www.edsm.net/dump/systemsPopulated.json.gz");
             pop_system_template[] rtn = new pop_system_template[file_contents.Length];
             int spot = 0;
             string temp = "";
@@ -157,11 +159,16 @@ namespace pop_system
                         if (stuff.stations[i].government == null)
                             bldr.government = government_type.unknown;
                         else
-                            bldr.government = (government_type)(stuff.stations[i].government == "Prison colony" ? government_type.Prison_colony : (stuff.stations[i].government == "Workshop (Engineer)"? government_type.Workshop_Engineer: stuff.stations[i].government));
+                            bldr.government = (government_type) (stuff.stations[i].government == "Prison colony" ? government_type.Prison_colony : 
+                                                                (stuff.stations[i].government == "Workshop (Engineer)"? government_type.Workshop_Engineer: 
+                                                                (stuff.stations[i].government == "Fleet Carrier"? government_type.Fleet_Carrier : 
+                                                                stuff.stations[i].government)));
                         if (stuff.stations[i].economy == null)
                             bldr.pri_economy = null;
                         else
-                            bldr.pri_economy = (stuff.stations[i].economy == "High Tech" ? economy_type.High_Tech : (economy_type)stuff.stations[i].economy);
+                            bldr.pri_economy = (stuff.stations[i].economy == "High Tech" ? economy_type.High_Tech : 
+                                               (stuff.stations[i].economy == "Fleet Carrier" ? economy_type.Fleet_Carrier : 
+                                               (economy_type)stuff.stations[i].economy));
                         if (stuff.stations[i].secondEconomy == null)
                             bldr.sec_economy = null;
                         else
@@ -255,10 +262,16 @@ namespace pop_system
                 rtn[spot++].last_scan_date = DateTime.Parse(temp);
             }
             Console.WriteLine("Step 2 of 2: Loading EDDB Info");
-            file_contents = EDDBdownload("https://eddb.io/archive/v5/systems_populated.json");
+            file_contents = EDDBdownload("https://eddb.io/archive/v6/systems_populated.json");
             foreach (string x in file_contents)
             {
-                dynamic stuff = JObject.Parse(x);
+                dynamic stuff = "";
+                try
+                {
+                    stuff = JObject.Parse(x);
+                }
+                catch { continue; }
+
                 for (int i = 0; i != rtn.Length; i++)
                 {
                     if (rtn[i].eddbid != 0)
@@ -341,6 +354,8 @@ namespace pop_system
                     return station_type.Outpost;
                 case "Mega ship":
                     return station_type.Megaship;
+                case "Fleet Carrier":
+                    return station_type.Fleet_Carrier;
                 default:
                     throw new NotImplementedException("Uknown starport type: " + obj);
             }
@@ -354,40 +369,55 @@ namespace pop_system
             temp = temp.Replace("},{\"id\"", "}" + Environment.NewLine + "{\"id\"");//move each entry into a new line
 
             //Write text to read (faster then going line per line)
-            File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"), temp);
-            string[] ret = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
-            File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
+            File.WriteAllText("temp.json", temp);
+            string[] ret = File.ReadAllLines("temp.json");
+            File.Delete("temp.json");
             return ret;
         }
         public string[] downloader(string addr)
         {
-            if (testing_toggle)
+            //    string temp = "";
+            //    using (WebClient client = new WebClient())
+            //        temp = client.DownloadString(addr);
+            //    temp = temp.Substring(6, temp.Length - 8);
+            //    temp = temp.Replace("},\n    {\"id\"", "}" + Environment.NewLine + "{\"id\"");
+            //    File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"), temp);
+            //    string[] ret = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
+            //    File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
+            //    return ret;
+
+            using (var client = new WebClient())
             {
-                if (!File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json")) || File.GetCreationTime(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json")) < DateTime.Now.AddDays(-1))
-                {
-                    File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
-                    string temp = "";
-                    using (WebClient client = new WebClient())
-                        temp = client.DownloadString(addr);
-                    temp = temp.Substring(6, temp.Length - 8);
-                    temp = temp.Replace("},\n    {\"id\"", "}" + Environment.NewLine + "{\"id\"");
-                    File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"), temp);
-                }
-                string[] ret = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
-                return ret;
+                client.DownloadFile(addr, "edsmpopsys.json.gz");
             }
-            else
+            FileStream sourceFileStream = File.OpenRead("edsmpopsys.json.gz");
+            FileStream destFileStream = File.Create("edsmpopsys.json");
+
+            GZipStream decompressingStream = new GZipStream(sourceFileStream,
+                CompressionMode.Decompress);
+            int byteRead;
+            while ((byteRead = decompressingStream.ReadByte()) != -1)
             {
-                string temp = "";
-                using (WebClient client = new WebClient())
-                    temp = client.DownloadString(addr);
-                temp = temp.Substring(6, temp.Length - 8);
-                temp = temp.Replace("},\n    {\"id\"", "}" + Environment.NewLine + "{\"id\"");
-                File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"), temp);
-                string[] ret = File.ReadAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
-                File.Delete(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "temp.json"));
-                return ret;
+                destFileStream.WriteByte((byte)byteRead);
             }
+
+            decompressingStream.Close();
+            sourceFileStream.Close();
+            destFileStream.Close();
+
+            string[] temp = File.ReadAllLines("edsmpopsys.json");
+            string[] ret = new string[temp.Length - 2];
+            int i = 0;
+            foreach (string x in temp)
+            {
+                if (x == "[" || x == "]")
+                    continue;
+                ret[i++] = x.Substring(4, x.Length - 5);
+            }
+            ret[ret.Length - 1] = ret[ret.Length - 1] + "}";
+            File.Delete("edsmpopsys.json.gz");
+            File.Delete("edsmpopsys.json");
+            return ret;
         }
         public int edsmbodies(string name)
         {

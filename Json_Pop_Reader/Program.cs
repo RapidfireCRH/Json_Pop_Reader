@@ -40,6 +40,8 @@ namespace pop_system
         /// <summary>
         /// Find old systems and displays known data
         /// </summary>
+        /// v2.1 - corrected errors, updated to use new compressed format from edsm
+        /// v2.0 - added EDSM bodies
         /// v1.03 - help added, catching of errors
         /// v1.02 - Export, import and station support added
         /// v1.01 - closest and find commands added
@@ -48,7 +50,7 @@ namespace pop_system
         static void Main(string[] args)
         {
             Console.WriteLine("Json_Pop_Reader");
-            Console.WriteLine("V2.0 EDSM Edition");
+            Console.WriteLine("V2.1 EDSM Edition");
             for (int i = 0; i != 5; i++)
                 Console.WriteLine();
             Json_reader j = new Json_reader();
@@ -124,7 +126,7 @@ namespace pop_system
                             list.Sort();
                             Console.WriteLine();
                             for (int i = 1; i != 21; i++)
-                                Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + systems[list[i].place].last_scan_date.ToShortDateString() + systems[list[i].place].last_scan_date.ToLongTimeString());
+                                Console.WriteLine(i.ToString() + ". " + Math.Ceiling(list[i].distance) + "ly | " + systems[list[i].place].name + " - Last Updated: " + systems[list[i].place].last_scan_date.ToShortDateString() + " " + systems[list[i].place].last_scan_date.ToLongTimeString());
                             Console.WriteLine("Press [Enter] to continue");
                             Console.Read();
                             break;
