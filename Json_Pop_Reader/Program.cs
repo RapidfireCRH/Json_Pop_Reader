@@ -22,7 +22,7 @@ using System.Collections;
 
 namespace pop_system
 {
-    
+
     class Program
     {
         /// <summary>
@@ -239,13 +239,43 @@ namespace pop_system
             ret += station.Material_Trader.HasValue ? ((bool)station.Material_Trader ? "MAT" : "---") : "-?-";
             ret += " ";
             ret += station.Tech_Broker.HasValue ? ((bool)station.Tech_Broker ? "TEC" : "---") : "-?-";
-            ret += " " + 
-                (station.market_update.HasValue ? station.market_update.Value.ToShortDateString() : 
-                (station.outfitting_update.HasValue ? station.outfitting_update.Value.ToShortDateString() : 
-                (station.shipyard_update.HasValue ? station.shipyard_update.Value.ToShortDateString() : 
+            ret += " " +
+                (station.market_update.HasValue ? station.market_update.Value.ToShortDateString() :
+                (station.outfitting_update.HasValue ? station.outfitting_update.Value.ToShortDateString() :
+                (station.shipyard_update.HasValue ? station.shipyard_update.Value.ToShortDateString() :
                 (station.last_update.HasValue ? station.last_update.Value.ToShortDateString() : "Unknown Date"))));
-            ret += " | " + station.name;
+            ret += " | " + station.name + " - " + stationstr(station.type);
             return ret;
+        }
+        static string stationstr(Json_reader.station_type type)
+        {
+            switch (type)
+            {
+                case Json_reader.station_type.Asteroid_Base:
+                    return "Asteroid Base";
+                case Json_reader.station_type.Coriolis_Starport:
+                    return "Coriolis";
+                case Json_reader.station_type.Fleet_Carrier:
+                    return "Fleet Carrier";
+                case Json_reader.station_type.Megaship:
+                    return "MegaShip";
+                case Json_reader.station_type.Ocellus_Starport:
+                    return "Ocellus";
+                case Json_reader.station_type.Orbis_Starport:
+                    return "Orbis";
+                case Json_reader.station_type.Outpost:
+                    return "Outpost";
+                case Json_reader.station_type.Planetary_Outpost:
+                    return "Outpost (Planetary)";
+                case Json_reader.station_type.Planetary_Port:
+                    return "Port (Planetary)";
+                case Json_reader.station_type.Scientific_Outpost:
+                    return "Scientific_Outpost";
+                case Json_reader.station_type.unknown:
+                default:
+                    return "Unknown Outpost";
+
+            }
         }
     }
 }

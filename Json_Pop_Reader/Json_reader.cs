@@ -134,6 +134,7 @@ namespace pop_system
                 rtn[spot].controlling_faction.id = stuff.controllingFaction.id;
                 rtn[spot].controlling_faction.name = stuff.controllingFaction.name;
                 rtn[spot].stations = new List<station_template>();
+                rtn[spot].body_count = stuff.bodies.Count;
                 if (x.Contains("\"stations\":[{"))
                 {
                  
@@ -262,15 +263,10 @@ namespace pop_system
                 rtn[spot++].last_scan_date = DateTime.Parse(temp);
             }
             Console.WriteLine("Step 2 of 2: Loading EDDB Info");
-            file_contents = EDDBdownload("https://eddb.io/archive/v6/systems_populated.json");
+            file_contents = EDDBdownload("https://eddb.io/archive/v6/systems_populated.jsonl");
             foreach (string x in file_contents)
             {
-                dynamic stuff = "";
-                try
-                {
-                    stuff = JObject.Parse(x);
-                }
-                catch { continue; }
+                dynamic stuff = JObject.Parse(x);
 
                 for (int i = 0; i != rtn.Length; i++)
                 {
@@ -365,8 +361,7 @@ namespace pop_system
             string temp = "";
             using (WebClient client = new WebClient())
                 temp = client.DownloadString(addr);
-            temp = temp.Substring(1, temp.Length - 2);//Remove [ and ]
-            temp = temp.Replace("},{\"id\"", "}" + Environment.NewLine + "{\"id\"");//move each entry into a new line
+            temp = temp.Replace("}\n{\"id\"", "}" + Environment.NewLine + "{\"id\"");//move each entry into a new line
 
             //Write text to read (faster then going line per line)
             File.WriteAllText("temp.json", temp);
