@@ -39,39 +39,37 @@ namespace pop_system
             public long marketid;
             public station_type type;
             public string name;
-            public Nullable<long> arrival_distance;
+            public long? arrival_distance;
             public allegiance_type allegiance;
             public government_type government;
-            public Nullable<economy_type> pri_economy;
-            public Nullable<economy_type> sec_economy;
-            public Nullable<bool> market;
-            public Nullable<bool> shipyard;
-            public Nullable<bool> outfitting;
-            public Nullable<DateTime> last_update;
-            public Nullable<int> pad_size;
-            public Nullable<bool> blackmarket;
-            public Nullable<bool> refuel;
-            public Nullable<bool> repair;
-            public Nullable<bool> rearm;
-            public Nullable<bool> contacts;
-            public Nullable<bool> cartographics;
-            public Nullable<bool> missions;
-            public Nullable<bool> crew;
-            public Nullable<bool> tuning;
-            public Nullable<bool> Interstellar_contact;
-            public Nullable<bool> Search_and_Rescue;
-            public Nullable<bool> Material_Trader;
-            public Nullable<bool> Tech_Broker;
-            public Nullable<DateTime> shipyard_update;
-            public Nullable<DateTime> outfitting_update;
-            public Nullable<DateTime> market_update;
-            public Nullable<int> body_id;
+            public economy_type? pri_economy;
+            public economy_type? sec_economy;
+            public bool? market;
+            public bool? shipyard;
+            public bool? outfitting;
+            public DateTime? last_update;
+            public bool? blackmarket;
+            public bool? refuel;
+            public bool? repair;
+            public bool? rearm;
+            public bool? contacts;
+            public bool? cartographics;
+            public bool? missions;
+            public bool? crew;
+            public bool? tuning;
+            public bool? Interstellar_contact;
+            public bool? Search_and_Rescue;
+            public bool? Material_Trader;
+            public bool? Tech_Broker;
+            public DateTime? shipyard_update;
+            public DateTime? outfitting_update;
+            public DateTime? market_update;
         }
         public struct pop_system_template : IComparable<pop_system_template>
         {
             public int id;//edsm ID
             public int eddbid;
-            public Nullable<long> id64;
+            public long? id64;
             public string name;
             public struct coord_st
             {
@@ -84,7 +82,7 @@ namespace pop_system
             public government_type government;
             public economy_type economy;
             public security_type security;
-            public int population;
+            public long population;
             public struct faction_template
             {
                 public int id;
@@ -275,6 +273,7 @@ namespace pop_system
                     if (stuff.edsm_id == rtn[i].id)
                     {
                         rtn[i].eddbid = stuff.id;
+                        rtn[i].population = stuff.population;
                         break;
                     }
                 }
@@ -385,20 +384,18 @@ namespace pop_system
             {
                 client.DownloadFile(addr, "edsmpopsys.json.gz");
             }
-            FileStream sourceFileStream = File.OpenRead("edsmpopsys.json.gz");
-            FileStream destFileStream = File.Create("edsmpopsys.json");
-
-            GZipStream decompressingStream = new GZipStream(sourceFileStream,
-                CompressionMode.Decompress);
-            int byteRead;
-            while ((byteRead = decompressingStream.ReadByte()) != -1)
+            using (FileStream sourceFileStream = File.OpenRead("edsmpopsys.json.gz"))
             {
-                destFileStream.WriteByte((byte)byteRead);
+                using (FileStream destFileStream = File.Create("edsmpopsys.json"))
+                {
+                    using (GZipStream decompressingStream = new GZipStream(sourceFileStream, CompressionMode.Decompress))
+                    {
+                        int byteRead;
+                        while ((byteRead = decompressingStream.ReadByte()) != -1)
+                            destFileStream.WriteByte((byte)byteRead);
+                    }
+                }
             }
-
-            decompressingStream.Close();
-            sourceFileStream.Close();
-            destFileStream.Close();
 
             string[] temp = File.ReadAllLines("edsmpopsys.json");
             string[] ret = new string[temp.Length - 2];

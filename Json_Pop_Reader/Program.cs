@@ -62,7 +62,6 @@ namespace pop_system
                 Array.Sort(systems);
                 int ptr = 0;
                 string k = "";
-                systems[ptr].body_count = j.edsmbodies(systems[ptr].name);
                 while (!systems[ptr].done)
                 {
                     Console.Clear();
@@ -85,7 +84,7 @@ namespace pop_system
                     switch (k.ToLower()[0])
                     {
                         case 'r'://open ross page
-                            System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].id.ToString());
+                            System.Diagnostics.Process.Start("https://ross.eddb.io/system/update/" + systems[ptr].eddbid.ToString());
                             break;
                         case 'e'://open EDSM page
                             System.Diagnostics.Process.Start("https://www.edsm.net/en/system/id/" + systems[ptr].id.ToString() + "/name");
